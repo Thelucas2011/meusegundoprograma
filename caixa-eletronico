@@ -1,0 +1,73 @@
+import hashlib
+from time import sleep
+banco_de_dados = {}
+
+def criptografar_senha(senha):
+    senha_criptografada = hashlib.sha256(senha.encode()).hexdigest()
+    return senha_criptografada
+
+def verificar_cadastro(cpf):
+    if cpf in banco_de_dados:
+        return True
+    return False
+
+def verificar_senha(cpf, senha):
+    senha_digitada = criptografar_senha(senha)
+    if banco_de_dados[cpf]["senha"] == senha_digitada:
+        return True
+    return False
+
+def realizar_cadastro():
+    nome = input(str("Digite seu nome: "))
+    cpf = input("Digite seu CPF (somente números): ")
+    while True:
+        senha = input("Digite sua senha numérica de 6 dígitos: ")
+        if senha.isdigit() and len(senha) == 6:
+            break
+        else:
+            print("A senha precisa ser um número e ter 6 dígitos. Tente novamente.")
+    senha_criptografada = criptografar_senha(senha)
+    banco_de_dados[cpf] = {"nome": nome, "senha": senha_criptografada}
+    print("Cadastro realizado com sucesso.")
+
+while True:
+    opcao = input("Você já está cadastrado? (S/N) ")
+    if opcao.upper() == "S":
+        cpf = input("Digite seu CPF (somente números): ")
+        if verificar_cadastro(cpf):
+            senha = input("Digite sua senha: ")
+            if verificar_senha(cpf, senha):
+                print("Buscando seus dados por favor aguarde")
+                sleep(2)
+                print(f"Acesso completo, bem-vindo de volta {banco_de_dados[cpf]['nome']}.")
+                break
+            else:
+                print("Senha incorreta. Tente novamente.")
+        else:
+            print("CPF não encontrado.")
+    elif opcao.upper() == "N":
+        realizar_cadastro()
+    else:
+        print("Opção inválida. Tente novamente.")
+saldo=0
+while True:
+    opcoes = int(input('Aqui estão suas opções \n1-ver saldo \n2-Depositar \n3-Sacar \n4-Sair'))
+    if opcoes == 1:
+        print(saldo)
+    elif opcoes == 2:
+        valor=int(input('Deposite o Valor desejado (Apenas Números Max 5000)'))
+        saldo+=valor
+        print("Deposito realizado com sucesso",)
+        print("Saldo Atual R$",saldo)
+    elif opcoes == 3:
+        sacar = int(input('Digite o Valor que deseja Sacar'))
+        if saldo < sacar:
+            print('valor insuficiente')
+        else:
+            saldo -= sacar
+            print(saldo,"Valor retirado com Sucesso!")
+            print("Saldo atual R$",saldo)
+    elif opcoes == 4:
+        print("Saindo ... Volte Sempre! ")
+        sleep(2)
+        break
